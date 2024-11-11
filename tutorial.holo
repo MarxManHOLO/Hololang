@@ -1,0 +1,94 @@
+#Yadda saxla:   Hololang-da kodlar diger dillerden ferqli yazılır. bu dilde algoritm deki deyişenler , datalar evvel ; operatorlar sonrasından yazılır.(aşağıdaki kodlara bax bileceksen ne demek isteyirem)
+
+
+
+
+
+
+
+
+
+
+
+"Hello,World" WRTLN   
+#Burada Hello,World yazısı "" içinde String data olaraq alınır. WRTLN ise ekrana çıxtı verir
+
+
+
+
+
+
+
+"" READL WRTLN
+# Burada READLN operatoru özünden evvel gelen "" ın içinde istifadecinin yazı daxil etmesinde imkan verir ve arxa planda müveqqeti bir deyişende saxlayır. WRTLN ise deyişenin içindeki String -i ekrana çıxxarır
+
+
+
+
+
+
+
+9000 80000 + TOSTR WRTLN
+#Burada biz 9000 ile 80000 ededlerini toplayırıq. TOSTR iafdesi aalınan cavabı arxa planda dijital ve müveqqeti bir deyişene String olaraq atayır. WRTLN ile ise hemin String i ekrana çıxarırıq.
+
+
+
+
+
+
+
+
+
+"1" "2" "3" WRTLN WRTLN WRTLN
+
+#burada 1 2 3 reqemleri qeyd olunur. ancaq "" onları String tipli data edir. İndi bir şey varki biraz qeribedir. ekrana biz bunları WRTLN ile çıxaranda reqemler ters şekilde çıxırlar. bunun sebebi ise komputerin binary memarisinde durur. bunun üçün ise biz evvelce reqemleri bir ARRAY-da deyişenlere atayıb sonra ekrana çıkaraq. bunun kimi:
+
+[$a $b $c a b c] $list
+"1" "2" "3" list! WRTLN WRTLN WRTLN
+
+#yuxarıda a b ve c deyişenleri list deyişeninin içinde sıra olaraq qeyd olunur. ikinci setirde ise reqemler sırasıyla deyişenlere atılır ve deyişen sayısı qeder WRTLN operatoru ile ekrana çıxarılırlar(WRTLN operatoru artıq qoyulsa xeta verir, eksik qoyulsa ise eksik qoyulan qeder list-in sonundan başlayaraq ekrana az çıxtı verir.
+
+
+
+
+
+
+
+
+
+
+[1 $i] [i 30 <] [i 1 + =i] [
+	i 15 % 0 == ["FizzBuzz" WRTLN CONT] IF
+	i 5 % 0 == ["Buzz" WRTLN CONT] IF
+	i 3 % 0 == ["Buzz" WRTLN CONT] IF
+	i TOSTR WRTLN
+] FOR
+
+#Buarada ise biz mehşur "FizzBuzz" meselesini hell edirik . amma 30 ededine qeder (30 daxil olmadan).
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+3 6 7 + * $ifade TONUMB ifade SRLZ WRTLN   
+#İndi buarada biz 3 + 6 * 7 kimi bir ifade qururuq. bunu "ifade" deyişenine atırıq (TONUMB ile , TOSTR den ferqli olaraq burada biz ifadeni deyişene INT data kimi atmalıyıq). Sonra ise SRLZ ile biz deyişenin içindeki dataları "Açırıq" . WRTLN ile de ekrana yazırıq. eslinde buna benzer algoritm-i biz yuxarıda ikinci kodda qurduq. ancaq qarmaşıq ifadeler üçün bu daha elverişlidir.
+
+
+
+
+
+
+
+
+
+
+
