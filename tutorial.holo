@@ -1,4 +1,4 @@
-#Yadda saxla:   Hololang-da kodlar diger dillerden ferqli yazılır. bu dilde algoritm deki deyişenler , datalar evvel ; operatorlar sonrasından yazılır.(aşağıdaki kodlara bax bileceksen ne demek isteyirem)
+# Codes are written differently in Hololanguage than in other languages. variables in the algorithm in this language , data before ; operators are written afterwards. (click on the codes below to see what I mean)
 
 
 
@@ -10,8 +10,8 @@
 
 
 
-"Hello,World" WRTLN   
-#Burada Hello,World yazısı "" içinde String data olaraq alınır. WRTLN ise ekrana çıxtı verir
+"Hello,World" WRTLN
+#Here the Hello,World entry is taken as String data in "". WRTLN provides screen output
 
 
 
@@ -19,8 +19,8 @@
 
 
 
-"" READL WRTLN
-# Burada READLN operatoru özünden evvel gelen "" ın içinde istifadecinin yazı daxil etmesinde imkan verir ve arxa planda müveqqeti bir deyişende saxlayır. WRTLN ise deyişenin içindeki String -i ekrana çıxxarır
+"" READ WRTLN
+# Here, the READLN operator allows the user to insert a record inside the preceding "" and freezes it if the backplane temporary changes. The String inside the WRTLN variable displays a screen
 
 
 
@@ -29,7 +29,7 @@
 
 
 9000 80000 + TOSTR WRTLN
-#Burada biz 9000 ile 80000 ededlerini toplayırıq. TOSTR iafdesi aalınan cavabı arxa planda dijital ve müveqqeti bir deyişene String olaraq atayır. WRTLN ile ise hemin String i ekrana çıxarırıq.
+#Here we will collect 9000 by 80000 edes. The response received from the TOSTR statement is returned as a String, a digital and temporary variable in the archa plane. With WRTLN, we will output hemin String i to the screen.
 
 
 
@@ -41,12 +41,12 @@
 
 "1" "2" "3" WRTLN WRTLN WRTLN
 
-#burada 1 2 3 reqemleri qeyd olunur. ancaq "" onları String tipli data edir. İndi bir şey varki biraz qeribedir. ekrana biz bunları WRTLN ile çıxaranda reqemler ters şekilde çıxırlar. bunun sebebi ise komputerin binary memarisinde durur. bunun üçün ise biz evvelce reqemleri bir ARRAY-da deyişenlere atayıb sonra ekrana çıkaraq. bunun kimi:
+#here the numbers 1 2 3 are recorded. only the "" ones were String type data. Something about India is a little strange. screen when we print these with WRTLN the numbers will print in reverse. the reason for this is in the binary architecture of your computer. to do this, we first assign the numbers to the variables in an ARRAY and then output the screen. and chemistry:
 
 [$a $b $c a b c] $list
 "1" "2" "3" list! WRTLN WRTLN WRTLN
 
-#yuxarıda a b ve c deyişenleri list deyişeninin içinde sıra olaraq qeyd olunur. ikinci setirde ise reqemler sırasıyla deyişenlere atılır ve deyişen sayısı qeder WRTLN operatoru ile ekrana çıxarılırlar(WRTLN operatoru artıq qoyulsa xeta verir, eksik qoyulsa ise eksik qoyulan qeder list-in sonundan başlayaraq ekrana az çıxtı verir.
+#above the variables a b and c are declared as a row inside the list variable. in the second line, the numbers are thrown into the variables in order and the number of variables is output to the screen with the WRTLN operator (if the WRTLN operator is set to more, it gives a zeta, if it is set to less, the number is set to the screen to get less from the end of the list-in.
 
 
 
@@ -58,13 +58,13 @@
 
 
 [1 $i] [i 30 <] [i 1 + =i] [
-	i 15 % 0 == ["FizzBuzz" WRTLN CONT] IF
-	i 5 % 0 == ["Buzz" WRTLN CONT] IF
-	i 3 % 0 == ["Buzz" WRTLN CONT] IF
-	i TOSTR WRTLN
+  i 15 % 0 == ["FizzBuzz" WRTLN CONT] IF
+  i 5 % 0 == ["Buzz" WRTLN CONT] IF
+  i 3 % 0 == ["Buzz" WRTLN CONT] IF
+  and TOSTR WRTLN
 ] FOR
 
-#Buarada ise biz mehşur "FizzBuzz" meselesini hell edirik . amma 30 ededine qeder (30 daxil olmadan).
+#Here we are solving the famous "FizzBuzz" problem. but up to 30 (excluding 30).
 
 
 
@@ -79,16 +79,5 @@
 
 
 
-3 6 7 + * $ifade TONUMB ifade SRLZ WRTLN   
-#İndi buarada biz 3 + 6 * 7 kimi bir ifade qururuq. bunu "ifade" deyişenine atırıq (TONUMB ile , TOSTR den ferqli olaraq burada biz ifadeni deyişene INT data kimi atmalıyıq). Sonra ise SRLZ ile biz deyişenin içindeki dataları "Açırıq" . WRTLN ile de ekrana yazırıq. eslinde buna benzer algoritm-i biz yuxarıda ikinci kodda qurduq. ancaq qarmaşıq ifadeler üçün bu daha elverişlidir.
-
-
-
-
-
-
-
-
-
-
-
+3 6 7 + * $expression TONUMB expression SRLZ WRTLN
+#In here we are dry an expression like 3 + 6 * 7 . let's cast this to the variable "expression" (with TONUMB , unlike TOSTR where we cast the expression as variable INT data). Then with SRLZ we change the data inside to "Open". Screen recording with WRTLN as well. in fact, it's a similar algorithm to the one we built in the second code above. but this is more convenient for compound expressions.
