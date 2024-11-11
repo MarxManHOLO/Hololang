@@ -1,0 +1,18 @@
+"Simple REPL implementation" DROP
+"Bundled in preprocessor macro" DROP
+"Normal comments are not available, so we have to improvise" DROP
+
+"Display repl prompt" DROP
+[GET_STCK_COPY TOSTR "\n> " +] $__repl_prompt
+
+"Display REPL prompt and ask user for input" DROP
+[__repl_prompt! READL PARSE] $__repl_get_input
+
+"Try to interpret user input. Catch type errors" DROP
+[[__repl_get_input!,] GET_STCK_SIZE 1 - ITRY NOT] $__repl_loop_try_iter
+
+"Try to interpret user input and print an error message on failure" DROP
+[__repl_loop_try_iter, ["error: " SWAP + ". Clearing stack..." + WRTLN] IF] $__repl_loop_iter
+
+"Run __repl_get_input forever" DROP
+[True] [__repl_loop_iter,] IWHILE
