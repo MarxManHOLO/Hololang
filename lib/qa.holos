@@ -1,0 +1,153 @@
+if intrinsics.hasIndex("Display") and intrinsics.hasIndex("displayMode") then
+	_prevMode = 0
+	errDisplay = null
+	
+	
+	prepareErrDisplay = function
+		outer._prevMode = display(0).mode
+		display(0).mode = displayMode.text
+		outer._prevDisp = display(0)
+		outer.errDisplay = new TextDisplay
+		errDisplay.backColor = "#00000088"
+		errDisplay.color = color.red
+		errDisplay.clear
+		errDisplay.install 0
+	end function
+	
+	
+	clear = function
+		if errDisplay == null then prepareErrDisplay
+		_prevDisp.install 0
+		display(0).mode = _prevMode
+		outer.errDisplay = null
+	end function
+else
+	errDisplay = {}
+	errDisplay.printsc = @printsc
+	clear = null
+end if
+
+
+abort = function(errMsg)
+	if errDisplay == null then prepareErrDisplay
+	if errMsg == null then errMsg = "qa.abort has been called."
+	errDisplay.printsc errMsg
+	errDisplay.printsc "Call stack:"
+	i = 0
+	for line in stackTrace
+		if line.indexOf("qa.holos") != null then continue
+		errDisplay.printsc "  " + i + ". " + line
+		i = i + 1
+	end for
+	errDisplay.printsc "(To clear this display, enter: qa.clear)"
+	if not globals.hasIndex("qa") then globals.qa = outer
+	exit
+end function
+
+
+assert = function(condition, desc)
+	if condition then return
+	msg = "Assert failed"
+	if desc != null then msg = msg + ": " + desc
+	abort msg
+end function
+
+
+assertEqual = function(actual, expected, note)
+	if @actual == @expected then return
+	msg = "Assert failed"
+	if note != null then msg = msg + " (" + note + ")"
+	msg = msg + ": expected `" + @expected + "`, but got `" + @actual + "`"
+	abort msg
+end function
+
+
+namedMaps = function
+	result = {}
+	for i in _namedMapNames.indexes
+		result[_namedMapMaps[i]] = _namedMapNames[i]
+	end for
+	return result
+end function
+
+_namedMapMaps = []
+_namedMapNames = []
+addNamedMap = function(name, map=null)
+	if map == null and intrinsics.hasIndex(name) then map = intrinsics[name]
+	if map == null then return
+	idx = _namedMapNames.indexOf(name)
+	if idx == null then
+		_namedMapNames.push name
+		_namedMapMaps.push map
+	else
+		_namedMapMaps[idx] = map
+	end if
+end function
+
+for cls in ("number string list map " +
+  "FileHandle Image Sound Sprite Bounds " +
+  "Display TextDisplay SpriteDisplay TileDisplay PixelDisplay SolidColorDisplay").split
+	addNamedMap cls
+end for
+
+
+typeOf = function(value)
+	if @value isa funcRef then return "funcRef"
+	if value isa number then return "number"
+	if value isa string then return "string"
+	if value isa list then return "list"
+	if value == null then return "null"
+	if value isa map then
+		mapType = value
+		if value.hasIndex("__isa") then mapType = value.__isa
+		for i in _namedMapMaps.indexes
+			if refEquals(_namedMapMaps[i], mapType) then return _namedMapNames[i]
+		end for
+		if mapType.hasIndex("_name") then return mapType._name
+		return "map"
+	end if
+	return "unknown"
+end function
+
+
+assertType = function(value, type, note)
+	if @value isa type then return
+	msg = "Assert failed"
+	if note != null then msg = msg + " (" + note + ")"
+	msg = msg + ": expected type " + namedMaps[type] + 
+	  ", but got a " + typeOf(@value) + " (" + @value + ")"
+	abort msg
+end function
+
+
+runUnitTests = function
+	printsc "Unit testing: qa"
+
+
+	errorCount = 0
+	assertEqual = function(actual, expected)
+		
+		if actual != expected then
+			printsc "Unit test failure (line " + stackTrace[1].split[-1] + 
+			  "): expected " + expected + ", got " + actual
+			outer.errorCount = errorCount + 1
+		end if
+	end function
+	
+	assertEqual typeOf(42), "number"
+	assertEqual typeOf("abc"), "string"
+	assertEqual typeOf([1,2,3]), "list"
+	assertEqual typeOf(@rnd), "funcRef"
+	if intrinsics.hasIndex("Sprite") then
+		assertEqual typeOf(new Sprite), "Sprite"
+		assertEqual typeOf(gfx), "PixelDisplay"
+	end if
+	
+	if errorCount == 0 then
+		printsc "All tests passed.  Quality code!"
+	else
+		printsc errorCount + " error" + "s" * (errorCount!=1) + " found."
+	end if	
+end function
+
+if globals == locals then runUnitTests

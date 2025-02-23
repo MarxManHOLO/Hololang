@@ -1,0 +1,26 @@
+x = 42      // here's a global variable called x
+f = function
+    x = 1234   // make a local variable, also called x
+    printsc "Inside the function, x is now " + x
+end function
+f
+printsc "Outside the function, x is " + x
+
+
+f = function
+    printsc "Using the globals prefix..."
+    globals.x = 1234   // update the global variable x
+    printsc "Inside the function, x is now " + x
+end function
+f
+printsc "Outside the function, x is " + x
+
+
+count = 0
+addToCount = function(amount=1)
+    globals.count = count + amount
+end function
+addToCount
+addToCount
+printsc "count is now: " + count
+

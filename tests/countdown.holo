@@ -1,0 +1,5 @@
+for i in range(10,1)
+	printsc i + "..."
+	wait
+end for
+printsc "BLASTOFF!!!!!!!!!!!!!!!!!!!!!!!!! Countdown ended!!!!!"

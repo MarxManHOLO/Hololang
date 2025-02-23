@@ -1,0 +1,327 @@
+import "listutils"
+import "mathutils"
+
+
+globals.Matrix = {}
+
+
+Matrix.rows = 0			
+Matrix.columns = 0		
+
+
+Matrix.elem = null
+
+Matrix.rowRange = function
+
+	self.rowRange = range(0, self.rows-1)
+	return self.rowRange
+end function
+Matrix.colRange = function
+	self.colRange = range(0, self.columns-1)
+	return self.colRange
+end function
+
+
+
+Matrix.fromList = function(sourceList)
+	m = new Matrix
+	if sourceList.len == 0 then return m
+	if sourceList[0] isa list then
+		m.rows = sourceList.len
+		m.columns = sourceList[0].len
+		m.elem = sourceList.deepCopy
+	else
+		m.rows = 1
+		m.columns = sourceList.len
+		m.elem = [sourceList[:]]
+	end if
+	return m
+end function
+
+
+Matrix.ofSize = function(rows, columns, initialValue=0)
+	m = new Matrix
+	m.rows = rows
+	m.columns = columns
+	m.elem = list.init2d(rows, columns, @initialValue)
+	return m
+end function
+
+
+Matrix.identity = function(size)
+	m = Matrix.ofSize(size, size)
+	for i in m.rowRange
+		m.elem[i][i] = 1
+	end for
+	return m
+end function
+
+
+Matrix.size = function
+	return [self.rows, self.columns]
+end function
+
+
+Matrix.row = function(zeroBasedRowNum)
+	return Matrix.fromList(self.elem[zeroBasedRowNum])
+end function
+
+
+Matrix.column = function(zeroBasedColNum)
+	m = Matrix.ofSize(self.rows, 1)
+	for r in self.rowRange
+		m.elem[r][0] = self.elem[r][zeroBasedColNum]
+	end for
+	return m
+end function
+
+
+
+Matrix.columnAsRow = function(zeroBasedColNum)
+	m = Matrix.ofSize(1, self.rows)
+	for r in self.rowRange
+		m.elem[0][r] = self.elem[r][zeroBasedColNum]
+	end for
+	return m
+end function
+
+
+Matrix.transpose = function
+	m = Matrix.ofSize(self.columns, self.rows)
+	for r in self.rowRange
+		for c in self.colRange
+			m.elem[c][r] = self.elem[r][c]
+		end for
+	end for
+	return m
+end function
+
+
+Matrix.clone = function
+	m = new Matrix
+	m.rows = self.rows
+	m.columns = self.columns
+	m.elem = [0] * self.rows
+	for r in self.rowRange
+		m.elem[r] = self.elem[r][:]
+	end for
+	return m
+end function
+
+
+Matrix.add = function(addend)
+	if addend isa Matrix then addend = addend.elem
+	if addend isa list then
+		for r in self.rowRange
+			selfRow = self.elem[r]
+			otherRow = addend[r]
+			for c in self.colRange
+				selfRow[c] = selfRow[c] + otherRow[c]
+			end for
+		end for
+	else
+		for row in self.elem
+			for c in self.colRange
+				row[c] = row[c] + addend
+			end for
+		end for
+	end if
+end function
+
+
+Matrix.plus = function(addend)
+	result = self.clone
+	result.add addend
+	return result
+end function
+
+
+Matrix.elemMultiplyBy = function(factor)
+	if factor isa Matrix then factor = factor.elem
+	if factor isa list then
+		for r in self.rowRange
+			selfRow = self.elem[r]
+			otherRow = factor[r]
+			for c in self.colRange
+				selfRow[c] = selfRow[c] * otherRow[c]
+			end for
+		end for
+	else
+		for row in self.elem
+			for c in self.colRange
+				row[c] = row[c] * factor
+			end for
+		end for
+	end if
+end function
+
+
+Matrix.elemTimes = function(factor)
+	result = self.clone
+	result.elemMultiplyBy factor
+	return result
+end function
+
+
+Matrix.times = function(m2)
+	if m2 isa Matrix then m2 = m2.elem
+	if m2 isa list then
+		// matrix multiplication
+		if m2.len != self.columns then
+			printsc "Matrix.times error: incompatible sizes " + 
+			  self.size + " and " + [m2.len, len(m2[0])]
+			exit
+		end if
+		result = Matrix.ofSize(self.rows, m2[0].len)
+		for r in result.rowRange
+			resultRow = result.elem[r]
+			for c in result.colRange
+				sum = 0
+				for i in self.colRange
+					sum = sum + self.elem[r][i] * m2[i][c]
+				end for
+				resultRow[c] = sum
+			end for
+		end for
+	else
+		// simple multiplication by a scalar
+		result = self.clone
+		result.elemMultiplyBy m2
+	end if
+	return result
+end function
+
+// m.swapRows: swap two rows in this matrix (in place).
+Matrix.swapRows = function(rowA, rowB)
+	temp = self.elem[rowA]
+	self.elem[rowA] = self.elem[rowB]
+	self.elem[rowB] = temp
+end function
+
+// m.swapColumns: swap two columns in this matrix (in place).
+Matrix.swapColumns = function(colA, colB)
+	for r in self.rowRange
+		row = self.elem[r]
+		temp = row[colA]
+		row[colA] = row[colB]
+		row[colB] = temp
+	end for
+end function
+
+// m.sameSize(m2): return whether matrix m is the same size as m2.
+Matrix.sameSize = function(m2)
+	return self.rows == m2.rows and self.columns == m2.columns
+end function
+
+
+Matrix.equals = function(m2)
+	if m2 isa list then m2elems = m2 else m2elems = m2.elem
+	return self.elem == m2elems
+end function
+
+// Matrix.round: rounds all numbers in the matrix.
+Matrix.round = function(decimalPlaces=0)
+	for row in self.elem
+		for i in row.indexes
+			row[i] = round(row[i], decimalPlaces)
+		end for
+	end for
+end function
+
+
+Matrix.printsc = function(fieldWidth=10, precision=null, columnSep="", rowSep=null)
+	if rowSep == null then rowSep = text.delimiter
+	for row in self.elem
+		line = []
+		for elem in row
+			s = mathUtil.numToStr(elem, precision)
+			if s.indexOf("E-") != null then s = "0"
+			if s.len >= fieldWidth and s.indexOf(".") != null then s = s[:fieldWidth-1]
+			if s.len < fieldWidth then s = " "*(fieldWidth-s.len) + s
+			line.push s
+		end for
+		printsc line.join(columnSep), rowSep
+	end for
+end function
+
+
+runUnitTests = function
+	printsc "Unit testing: matrixUtil"
+	
+	errorCount = 0
+	assertEqual = function(actual, expected, note)
+		if expected isa list and actual isa Matrix then actual = actual.elem
+		if actual != expected then
+			printsc "Unit test failure (" + note + "): expected " + expected + ", got " + actual + " at " + stackTrace[1]
+			outer.errorCount = errorCount + 1
+		end if
+	end function
+	
+	assert = function(shouldBeTrue, note)
+		if shouldBeTrue then return
+		printsc "Unit test failure (" + note + ")"
+	end function
+	
+	m = Matrix.ofSize(2,3, 42)
+	assertEqual m, [[42,42,42], [42,42,42]]
+	
+	m = Matrix.identity(3)
+	assertEqual m, [[1,0,0], [0,1,0], [0,0,1]]
+	
+	m = Matrix.fromList([1,2,3])
+	assertEqual m.rows, 1
+	assertEqual m.columns, 3
+	assertEqual m, [[1,2,3]]
+		
+	m = Matrix.fromList([[1,2,3], [4,5,6]])
+	assertEqual m.row(0), [[1,2,3]]
+	assertEqual m.row(1), [[4,5,6]]
+	assertEqual m.column(0), [[1], [4]]
+	assertEqual m.column(2), [[3], [6]]
+	assertEqual m.columnAsRow(2), [[3, 6]]
+	assert m.equals(Matrix.fromList([[1,2,3], [4,5,6]]))
+	assert m.equals([[1,2,3], [4,5,6]])
+	
+	m2 = m.clone
+	assertEqual m.elem, m2.elem
+	assert m.equals(m2)
+	m2.elem[1][2] = 60
+	assertEqual m, [[1,2,3], [4,5,6]]
+	assertEqual m2, [[1,2,3], [4,5,60]]	
+
+	mT = m.transpose
+	assertEqual m, [[1,2,3], [4,5,6]]
+	assertEqual mT, [[1,4], [2,5], [3,6]]
+	assert not m.sameSize(mT), "m.sameSize(mT)"
+	
+	m2 = m.plus(10)
+	assertEqual m, [[1,2,3], [4,5,6]]
+	assertEqual m2, [[11,12,13], [14,15,16]]	
+
+	m2 = m.plus([[10,0,0], [0,0,100]])
+	assertEqual m, [[1,2,3], [4,5,6]]
+	assertEqual m2, [[11,2,3], [4,5,106]]
+
+	m2 = m.times(10)
+	assertEqual m, [[1,2,3], [4,5,6]]
+	assertEqual m2, [[10,20,30], [40,50,60]]
+	
+	m2 = m.clone
+	m2.swapRows 0, 1
+	assertEqual m2, [[4,5,6], [1,2,3]]
+	m2 = m.clone
+	m2.swapColumns 1, 2
+	assertEqual m2, [[1,3,2], [4,6,5]]
+	
+	m2 = Matrix.fromList([[7,8], [9,10], [11,12]])
+	product = m.times(m2)
+	assertEqual product, [[58,64], [139,154]]
+	
+	if errorCount == 0 then
+		printsc "All tests passed.  Matrices rock!"
+	else
+		printsc errorCount + " error" + "s" * (errorCount!=1) + " found."
+	end if
+end function
+
+if globals == locals then runUnitTests

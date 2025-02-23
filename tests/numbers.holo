@@ -1,0 +1,29 @@
+a = 7
+b = 3
+ultimateAnswer = 42
+pi = 3.14159
+n = true
+m = false
+printsc ultimateAnswer + ", " + pi + ", " + n + ", " + m
+
+
+printsc "Basic math:"
+printsc a + b     // addition
+printsc a - b     // subtraction
+printsc a * b     // multiplication
+printsc a / b     // division
+printsc a % b     // modulo (remainder)
+printsc a ^ b     // power
+
+printsc "Logic:"
+printsc n and m   // logical "and"
+printsc n or m    // logical "or"
+printsc not n     // logical negation
+
+printsc "Comparisons:"
+printsc a == b    // equality test (note == rather than = here!)
+printsc a != b    // inequality
+printsc a > b     // greater than
+printsc a >= b    // greater than or equal
+printsc a < b     // less than
+printsc a <= b    // less than or equal

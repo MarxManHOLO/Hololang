@@ -1,0 +1,21 @@
+m = {1:"one", 2:"two"}
+printsc m[1]      // one
+m[2] = "dos"    // change the value associated with index 2
+printsc m[2]      // dos
+
+
+m.pi = 3.14     // equivalent to: m["pi"] = 3.14
+printsc m["pi"]   // 3.14
+m["e"] = 2.72   // equivalent to: m.e = 2.72
+printsc m.e       // 2.72
+
+
+m1 = {1:"one", 2:"two"}
+m2 = {2:"dos", 3:"tres"}
+printsc m1 + m2   // map concatenation
+
+
+for kv in m1+m2
+    printsc kv.key + " -> " + kv.value
+end for
+

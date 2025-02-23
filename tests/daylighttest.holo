@@ -1,0 +1,14 @@
+import "qa"
+
+testDaylight = function
+	
+	
+	
+	d = "2000-01-01 11:00:00"
+	qa.assertEqual _dateStr(d, "%H"), "11"
+	
+	d = "2000-07-01 11:00:00"
+	qa.assertEqual _dateStr(d, "%H"), "11"
+end function
+
+if refEquals(locals, globals) then testDaylight

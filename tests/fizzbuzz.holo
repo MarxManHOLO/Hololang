@@ -1,0 +1,8 @@
+fizzBuzz = function(n)
+ for i in range(1, n)
+ s = "Fizz" * (i%3==0) + "Buzz" * (i%5==0)
+ if s == "" then s = str(i)
+ printsc s
+ end for
+ end function
+ fizzBuzz 100

@@ -1,0 +1,35 @@
+
+rollDie = function
+    return ceil(rnd * 6)  // return a random number from 1-6
+end function
+print rollDie
+print rollDie
+
+
+roll = function(numberOfDice, sides=6)
+    sum = 0
+    for i in range(1, numberOfDice)
+        sum = sum + ceil(rnd * sides)
+    end for
+    return sum
+end function
+print roll(2)     // roll two 6-sided dice
+print roll(2,20)  // roll two 20-sided dice
+
+
+doRoll = function(numberOfDice, sides=6)
+    print "Rolling " + numberOfDice + "d" + sides + "..."
+    sum = 0
+    for i in range(1, numberOfDice)
+        roll = ceil(rnd * sides)
+        print "You rolled a " + roll + "."
+        sum = sum + roll
+    end for
+    print "Your total is: " + sum
+end function
+doRoll 3         // roll 3d6 -- note no parentheses needed
+doRoll 3, 8      // same here, but rolling 3d6
+
+
+f = @doRoll      // makes f refer to the same function as doRoll
+f 2,4            // rolls 2d4

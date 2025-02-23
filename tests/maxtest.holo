@@ -1,0 +1,9 @@
+max = function(seq)
+ if seq.len == 0 then return null
+ max = seq[0]
+ for item in seq
+ if item > max then max = item
+ end for
+ return max
+ end function
+ printsc max([5, -2, 12, 7, 0])

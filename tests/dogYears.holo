@@ -1,0 +1,13 @@
+while true
+	ageStr = input("Enter your age: ")
+	age = val(ageStr)
+	if age == 0 then
+		printsc "C'mon, don't be shy..."
+	else if age < 3 then
+		printsc "So young!  Really?  I don't think so..."
+	else
+		printsc "That's " + age*7 + " in dog years."
+		if age > 30 then printsc "Wow, you're old!"
+		break  
+	end if
+end while

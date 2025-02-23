@@ -1,0 +1,114 @@
+
+parseLines = function(lines, asRowList=true)
+	TAB = char(9)
+	CR = char(13)
+	
+	colNames = lines[0].split(TAB)
+	if asRowList then
+		result = []
+		dataCols = range(0, colNames.len-1)
+	else
+		result = {}
+		dataCols = range(1, colNames.len-1)
+	end if
+	
+	for lineNum in range(1, lines.len-1)
+		line = lines[lineNum]
+		if not line then continue
+		if line[-1] == CR then line = line[:-1]  
+		fields = line.split(TAB)
+		rowMap = {"_lineNum": lineNum + 1}
+		if asRowList then
+			result.push rowMap
+		else
+			if fields[0] == "" then continue
+			result[fields[0]] = rowMap
+		end if
+		for col in dataCols
+			if col >= fields.len then value = null else value = fields[col]
+			if value == "0" or val(value) != 0 then value = val(value)
+			rowMap[colNames[col]] = value
+		end for
+	end for
+	return result
+end function
+
+parseFile = function(path, asRowList=true)
+	lines = file.readLines(path)
+	if lines == null then
+		printsc "tsv.parseFile: unable to read " + path
+		return null
+	end if
+	return parseLines(lines, asRowList)
+end function
+
+
+parse = function(text, asRowList=true)
+	CR = char(13)
+	LF = char(10)
+	lines = []
+	if text.indexOf(CR+LF) != null then
+		lines = text.split(CR+LF)
+	else if text.indexOf(CR) != null then
+		lines = text.split(CR)
+	else
+		lines = text.split(LF)
+	end if
+	return parseLines(lines, asRowList)
+end function
+
+	
+
+runUnitTests = function
+	printsc "Unit testing: tsv"
+	
+	errorCount = 0
+	assertEqual = function(actual, expected)
+		if actual != expected then
+			printsc "Unit test failure: expected " + expected + ", got " + actual
+			outer.errorCount = errorCount + 1
+		end if
+	end function
+	
+	TAB = char(9)
+	
+	
+	sampleData = [
+		"name" + TAB + "color" + TAB + "points" + TAB + "calories",
+		"apple" + TAB + "red" + TAB + 100 + TAB + 234.5,
+		"banana" + TAB + "yellow" + TAB + 200 + TAB + 180.75,
+		"cherry" + TAB + "red" + TAB + 500 + TAB + 85.235]
+	data = parseLines(sampleData, false)
+	assertEqual data.len, 3
+	assertEqual data.apple.color, "red"
+	assertEqual data.banana.color, "yellow"
+	assertEqual data.cherry.points, 500
+	assertEqual data.cherry._lineNum, 4
+	
+	data = parse(sampleData.join(char(13)+char(10)), false)
+	assertEqual data.apple.points, 100
+	
+	data = parse(sampleData.join(char(13)), false)
+	assertEqual data.apple.points, 100
+	
+	data = parse(sampleData.join(char(10)), false)
+	assertEqual data.apple.points, 100
+	
+
+	data = parseLines(sampleData, true)
+	assertEqual data.len, 3
+	assertEqual data[0].name, "apple"
+	assertEqual data[0].color, "red"
+	assertEqual data[1].color, "yellow"
+	assertEqual data[2].points, 500
+	assertEqual data[2]._lineNum, 4	
+	
+	if errorCount == 0 then
+		printsc "All tests passed.  Woo!"
+	else
+		printsc errorCount + " error" + "s" * (errorCount!=1) + " found."
+	end if
+
+end function
+
+if locals == globals then runUnitTests

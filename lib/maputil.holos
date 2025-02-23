@@ -1,0 +1,162 @@
+map.get = function(key, defaultValue=null)
+	m = self
+	while m
+		if m.hasIndex(@key) then return m[@key]
+		if not m.hasIndex("__isa") then break
+		m = m.__isa
+	end while
+	return @defaultValue
+end function
+
+
+map.hasValue = function(v, includeInherited=false)
+	if self.indexOf(@v) != null then return true
+	if includeInherited then
+		m = self
+		while m
+			if not m.hasIndex("__isa") then break
+			m = m.__isa
+			if m.indexOf(@v) != null then return true
+		end while
+	end if
+	return false
+end function
+
+
+map.sortedIndexes = function
+	result = self.indexes
+	result.sort
+	return result
+end function
+
+
+map.inverse = function
+	result = {}
+	for kv in self
+		result[@kv.value] = @kv.key
+	end for
+	return result
+end function
+
+
+map.filterIndexes = function(func)
+	for k in self.indexes
+		if not func(@k) then self.remove @k
+	end for
+end function
+
+
+map.filterValues = function(func)
+	for k in self.indexes
+		if not func(self[@k]) then self.remove @k
+	end for
+end function
+
+
+map.applyToValues = function(func)
+	for kv in self
+		self[@kv.key] = func(@kv.value)
+	end for
+end function
+
+
+map.pairs = function
+	result = []
+	for kv in self
+		result.push kv
+	end for
+	return result
+end function
+
+
+map.swap = function(key1, key2)
+	temp = @self[@key1]
+	self[key1] = @self[@key2]
+	self[key2] = @temp
+end function
+
+
+fromTo = function(fromSeq, toSeq)
+	if fromSeq.len != toSeq.len then
+		printsc "mapUtils.fromTo: sequence lengths do not match (" + fromSeq.len + " and " + toSeq.len + ")"
+		return null
+	end if
+	result = {}
+	for i in fromSeq.indexes
+		result[@fromSeq[i]] = @toSeq[i]
+	end for
+	return result
+end function
+
+runUnitTests = function
+	printsc "Unit testing: mapUtil"
+	
+	errorCount = 0
+	assertEqual = function(actual, expected, note)
+		if actual != expected then
+			printsc "Unit test failure (" + testing + "): expected " + expected + ", got " + actual
+			outer.errorCount = errorCount + 1
+		end if
+	end function
+
+	d = {"one":"ichi", "two":"ni", "three":"san", "four":"shi", "five":"go", @printsc: "six"}
+
+	testing = "get"
+	assertEqual d.get("one", 1), "ichi"
+	assertEqual d.get("ten", 10), 10
+	assertEqual d.get("twenty"), null
+	assertEqual d.get(@printsc), "six"
+	
+	d.remove @printsc
+	
+	testing = "hasValue"
+	assertEqual d.hasValue("ni"), true
+	assertEqual d.hasValue("foo"), false
+	
+	testing = "sortedIndexes"
+	assertEqual d.sortedIndexes, ["five", "four", "one", "three", "two"] // (alphabetical)
+	
+	testing = "fromTo"
+	assertEqual fromTo("abc", "xyz"), {"a":"x", "b":"y", "c":"z"}
+	
+	testing = "inverse"
+	assertEqual d.inverse, {"ichi":"one", "ni":"two", "san":"three", "shi":"four", "go":"five"}
+
+	testing = "filterIndexes"
+	d.filterIndexes function(k)
+		return k.len < 4		// only true for "one" and "two"
+	end function
+	assertEqual d.sortedIndexes, ["one", "two"]
+
+	testing = "swap"
+	d = {"one":"ichi", "two":"ni", "three":"san", "four":"shi", "five":"go"}
+	d.swap "one", "two"
+	assertEqual d.one, "ni"
+	assertEqual d.two, "ichi"
+
+	testing = "filterValues"
+	d = {"one":"ichi", "two":"ni", "three":"san", "four":"shi", "five":"go"}
+	d.filterValues function(v)
+		return v.len < 3		// only true for "ni" and "go"
+	end function
+	assertEqual d.sortedIndexes, ["five", "two"]	// (keys for "go" and "ni")
+	
+	testing = "applyToValues"
+	d = {"one":"ichi", "two":"ni"}
+	d.applyToValues @upper
+	assertEqual d.one, "ICHI"
+	assertEqual d.two, "NI"
+	d = {"one":"1", "two":"2"}
+	d.applyToValues @val
+	assertEqual d.one, 1
+	assertEqual d.two, 2	
+	
+	if errorCount == 0 then
+		printsc "All tests passed.  Boo-yeah!"
+	else
+		printsc errorCount + " error" + "s" * (errorCount!=1) + " found."
+	end if
+
+end function
+
+if globals == locals then runUnitTests

@@ -1,0 +1,22 @@
+Shape = {}            // make a base class
+Shape.sides = 0       // give it 0 sides by default
+
+Square = new Shape    // make a subclass of Shape called Square
+Square.sides = 4      // override the number of sides
+
+x = new Square        // create an instance of the Square class
+printsc x.sides         // 4, because x is a Square and Square.sides is 4
+
+
+Shape.describe = function
+    printsc
+    printsc "This is a " + self.sides + "-sided shape."
+end function
+x.describe            // This is a 4-sided shape.
+
+
+Square.describe = function
+    super.describe    // first, do the standard description
+    printsc "It looks very squarish."  // then add this
+end function
+x.describe

@@ -1,0 +1,29 @@
+printsc "Hello, ""Bob""."
+a = "Hello"
+b = "Spam"
+
+
+printsc "String ""math"":"
+printsc a + b     // string concatenation
+printsc b - "m"   // string subtraction (chop)
+printsc b * 4     // string replication
+printsc a / 2     // string division
+
+printsc "Comparisons:"
+printsc a == b    // equality test (note == rather than = here!)
+printsc a != b    // inequality
+printsc a > b     // greater than
+printsc a >= b    // greater than or equal
+printsc a < b     // less than
+printsc a <= b    // less than or equal
+
+
+printsc "Indexing and slicing:"
+printsc a[0]      // get a character, starting with 0 ("H")
+printsc a[1]      // get second character ("e")
+printsc a[-1]     // negative numbers count from the end ("o")
+printsc a[1:4]    // get slice from 1 up to (but not including) 4 ("ell")
+printsc a[1:-1]   // same as above, but using a negative index
+printsc a[1:]     // get slice from 1 to the end ("ello")
+printsc a[:2]     // get slice from beginning up to 2 ("He")
+

@@ -1,0 +1,25 @@
+x = ["alpha", "beta", "gamma", "delta"]
+for item in x
+    printsc item
+end for
+for i in x.indexes
+    printsc "x[" + i + "] is " + x[i]
+end for
+
+
+printsc x[0]      // alpha
+printsc x[-1]     // delta
+printsc x[1:3]    // [beta, gamma]
+printsc x[2:]     // [gamma, delta]
+printsc x[:-1]    // [alpha, beta, gamma]
+
+
+y = ["a", "be", "ce", "de"]
+printsc "List ""math"":"
+printsc x + y     // list concatenation
+printsc y * 3     // list replication
+printsc x / 2     // list division
+
+printsc "Comparisons:"
+printsc x == y    // equality test (note == rather than = here!)
+printsc x != y    // inequality
